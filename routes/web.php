@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\SupplierController;
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/sales', [SalesController::class, 'index'])->name('sales');
     Route::get('/sales/{sale}', [SalesController::class, 'show'])->name('sales.show');
+
+    // End-of-day (Z-reading) — cashiers see their own; admins see everyone
+    Route::get('/reports/end-of-day', [ReportController::class, 'endOfDay'])->name('reports.eod');
 });
 
 Route::middleware('auth')->group(function () {

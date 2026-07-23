@@ -12,6 +12,7 @@ import CategoryIcon from '@mui/icons-material/Category';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 import GroupIcon from '@mui/icons-material/Group';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
@@ -31,9 +32,10 @@ const SIDEBAR_KEY = 'posify-sidebar-collapsed';
 const navGroups = [
     {
         items: [
-            { label: 'Dashboard', href: '/dashboard', icon: <DashboardIcon /> },
-            { label: 'POS',       href: '/pos',       icon: <PointOfSaleIcon /> },
-            { label: 'Sales',     href: '/sales',     icon: <ReceiptLongIcon /> },
+            { label: 'Dashboard',  href: '/dashboard',           icon: <DashboardIcon /> },
+            { label: 'POS',        href: '/pos',                 icon: <PointOfSaleIcon /> },
+            { label: 'Sales',      href: '/sales',               icon: <ReceiptLongIcon /> },
+            { label: 'End of Day', href: '/reports/end-of-day',  icon: <SummarizeIcon /> },
         ],
     },
     {
