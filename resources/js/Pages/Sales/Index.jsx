@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import {
     Box, Button, Chip, CircularProgress, Dialog, DialogContent, DialogTitle,
     Divider, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer,
     TableHead, TablePagination, TableRow, TextField, Tooltip, Typography,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import BlockIcon from '@mui/icons-material/Block';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import Swal from 'sweetalert2';
 import PaidIcon from '@mui/icons-material/Paid';
 import DiscountIcon from '@mui/icons-material/Discount';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
@@ -28,6 +30,8 @@ function Summary({ icon, label, value, color }) {
 }
 
 export default function Index({ sales, filters, summary }) {
+    const { auth } = usePage().props;
+    const isAdmin = auth.user?.role === 'admin';
     const [search, setSearch] = useState(filters.search || '');
     const [from, setFrom] = useState(filters.from || '');
     const [to, setTo] = useState(filters.to || '');
@@ -59,6 +63,27 @@ export default function Index({ sales, filters, summary }) {
     };
 
     const changePage = (_e, p) => apply({ page: p + 1 });
+
+    const voidSale = (sale) => {
+        Swal.fire({
+            title: `Void ${sale.invoice_number}?`,
+            text: 'Stock will be returned to inventory and the sale excluded from revenue. This cannot be undone.',
+            icon: 'warning',
+            input: 'text',
+            inputLabel: 'Reason for voiding',
+            inputPlaceholder: 'e.g. wrong order, customer refund…',
+            inputValidator: (v) => !v?.trim() && 'A reason is required.',
+            showCancelButton: true,
+            confirmButtonText: 'Void sale',
+            confirmButtonColor: '#dc2626',
+        }).then((r) => {
+            if (!r.isConfirmed) return;
+            router.post(`/sales/${sale.id}/void`, { reason: r.value.trim() }, {
+                preserveScroll: true,
+                onError: (errs) => Swal.fire('Void failed', Object.values(errs)[0] || 'Please try again.', 'error'),
+            });
+        });
+    };
 
     return (
         <AppLayout title="Sales" header={<Typography variant="h6" fontWeight={700}>Sales History</Typography>}>
@@ -109,21 +134,31 @@ export default function Index({ sales, filters, summary }) {
                                 </TableRow>
                             )}
                             {sales.data.map((s) => (
-                                <TableRow key={s.id} hover>
+                                <TableRow key={s.id} hover sx={s.status === 'voided' ? { opacity: 0.55 } : {}}>
                                     <TableCell sx={{ fontFamily: 'monospace' }}>{s.invoice_number}</TableCell>
                                     <TableCell sx={{ whiteSpace: 'nowrap' }}>{new Date(s.created_at).toLocaleString()}</TableCell>
                                     <TableCell>{s.user?.name || '—'}</TableCell>
                                     <TableCell align="center">{s.items_count}</TableCell>
                                     <TableCell align="center"><Chip size="small" variant="outlined" label={s.payment_method} /></TableCell>
-                                    <TableCell align="right" sx={{ fontWeight: 700 }}>{peso(s.total)}</TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 700,
+                                        textDecoration: s.status === 'voided' ? 'line-through' : 'none' }}>
+                                        {peso(s.total)}
+                                    </TableCell>
                                     <TableCell align="center">
                                         <Chip size="small" label={s.status}
-                                            color={s.status === 'completed' ? 'success' : 'default'} />
+                                            color={s.status === 'completed' ? 'success' : 'error'} />
                                     </TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
                                         <Tooltip title="View details">
                                             <IconButton size="small" onClick={() => openDetail(s.id)}><VisibilityIcon fontSize="small" /></IconButton>
                                         </Tooltip>
+                                        {isAdmin && s.status === 'completed' && (
+                                            <Tooltip title="Void sale">
+                                                <IconButton size="small" color="error" onClick={() => voidSale(s)}>
+                                                    <BlockIcon fontSize="small" />
+                                                </IconButton>
+                                            </Tooltip>
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -149,6 +184,18 @@ export default function Index({ sales, filters, summary }) {
                             <Typography variant="body2" color="text.secondary" mb={1}>
                                 {detail.created_at} · {detail.cashier || '—'} · {detail.payment_method}
                             </Typography>
+                            {detail.status === 'voided' && (
+                                <Paper variant="outlined" sx={{ p: 1.5, mb: 1.5, borderColor: 'error.main',
+                                    bgcolor: 'transparent' }}>
+                                    <Typography variant="body2" color="error" fontWeight={700}>VOIDED</Typography>
+                                    <Typography variant="caption" color="text.secondary" display="block">
+                                        {detail.voided_at} · by {detail.voided_by || '—'}
+                                    </Typography>
+                                    {detail.void_reason && (
+                                        <Typography variant="body2" sx={{ mt: 0.5 }}>“{detail.void_reason}”</Typography>
+                                    )}
+                                </Paper>
+                            )}
                             <Divider sx={{ mb: 1 }} />
                             <Stack spacing={0.5}>
                                 {detail.items.map((i, idx) => (

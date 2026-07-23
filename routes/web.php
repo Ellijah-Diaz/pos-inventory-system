@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
  | Inventory management — admin only.
  */
 Route::middleware(['auth', 'admin'])->group(function () {
+    Route::post('/sales/{sale}/void', [SalesController::class, 'void'])->name('sales.void');
+
     Route::resource('products', ProductController::class)->except(['create', 'show', 'edit']);
     Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
     Route::resource('suppliers', SupplierController::class)->except(['create', 'show', 'edit']);

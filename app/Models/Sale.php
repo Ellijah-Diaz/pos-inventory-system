@@ -19,6 +19,9 @@ class Sale extends Model
         'change',
         'payment_method',
         'status',
+        'voided_at',
+        'voided_by',
+        'void_reason',
     ];
 
     protected $casts = [
@@ -28,6 +31,7 @@ class Sale extends Model
         'total'       => 'decimal:2',
         'amount_paid' => 'decimal:2',
         'change'      => 'decimal:2',
+        'voided_at'   => 'datetime',
     ];
 
     public function items(): HasMany
@@ -38,6 +42,11 @@ class Sale extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function voidedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'voided_by');
     }
 
     /**
