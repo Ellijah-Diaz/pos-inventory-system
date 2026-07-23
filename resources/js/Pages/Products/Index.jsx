@@ -15,8 +15,10 @@ import Inventory2Icon from '@mui/icons-material/Inventory2';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ImageIcon from '@mui/icons-material/Image';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -153,8 +155,12 @@ export default function Index({ products, categories, suppliers, filters, stats 
                         <TableBody>
                             {products.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={9} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No products found.
+                                    <TableCell colSpan={9} sx={{ border: 0 }}>
+                                        <EmptyState icon={<Inventory2OutlinedIcon />}
+                                            title="No products found"
+                                            hint={filters.search || filters.category_id || filters.low_stock
+                                                ? 'Try clearing the search or filters.'
+                                                : 'Click "Add Product" to create your first one.'} />
                                     </TableCell>
                                 </TableRow>
                             )}

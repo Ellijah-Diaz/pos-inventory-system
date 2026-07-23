@@ -10,32 +10,59 @@ function printReceipt(sale) {
         `<tr><td>${i.name}<br><span class="muted">${i.quantity} x ${peso(i.price)}</span></td>
          <td class="r">${peso(i.subtotal)}</td></tr>`).join('');
 
+    const itemCount = sale.items.reduce((s, i) => s + i.quantity, 0);
+
     const html = `
     <html><head><title>${sale.invoice_number}</title><style>
-      * { font-family: 'Courier New', monospace; font-size: 12px; }
-      .c { text-align: center; } .r { text-align: right; } .muted { color: #555; font-size: 11px; }
+      /* 80mm thermal receipt — printable area ~72mm */
+      @page { size: 80mm auto; margin: 0; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: 'Courier New', monospace; font-size: 12px; color: #000;
+        width: 72mm; margin: 0 auto; padding: 4mm 2mm 6mm;
+      }
+      .c { text-align: center; } .r { text-align: right; }
+      .muted { color: #444; font-size: 11px; }
+      .store { font-size: 15px; font-weight: bold; letter-spacing: 1px; }
+      .meta td { padding: 0; font-size: 11px; }
       table { width: 100%; border-collapse: collapse; }
       td { padding: 2px 0; vertical-align: top; }
-      hr { border: none; border-top: 1px dashed #000; margin: 6px 0; }
-      h2 { margin: 0; } .totals td { padding: 1px 0; }
+      hr { border: none; border-top: 1px dashed #000; margin: 5px 0; }
+      .totals td { padding: 1px 0; }
+      .grand td { font-size: 14px; font-weight: bold; padding: 3px 0; }
+      .foot { margin-top: 6px; font-size: 11px; }
     </style></head><body>
-      <div class="c"><h2>POSify Store</h2>123 Market St, Manila<br>Tel: (02) 8000-0000</div>
+      <div class="c">
+        <div class="store">POSify Store</div>
+        <div class="muted">123 Market St, Manila<br>Tel: (02) 8000-0000</div>
+      </div>
       <hr>
-      Invoice: ${sale.invoice_number}<br>
-      Date: ${sale.created_at}<br>
-      Cashier: ${sale.cashier || '-'}
+      <table class="meta">
+        <tr><td>Invoice</td><td class="r">${sale.invoice_number}</td></tr>
+        <tr><td>Date</td><td class="r">${sale.created_at}</td></tr>
+        <tr><td>Cashier</td><td class="r">${sale.cashier || '-'}</td></tr>
+      </table>
       <hr>
       <table>${rows}</table>
       <hr>
       <table class="totals">
+        <tr><td>Items</td><td class="r">${itemCount}</td></tr>
         <tr><td>Subtotal</td><td class="r">${peso(sale.subtotal)}</td></tr>
         ${sale.discount > 0 ? `<tr><td>Discount</td><td class="r">-${peso(sale.discount)}</td></tr>` : ''}
-        <tr><td><b>TOTAL</b></td><td class="r"><b>${peso(sale.total)}</b></td></tr>
-        <tr><td>Paid (${sale.payment_method})</td><td class="r">${peso(sale.amount_paid)}</td></tr>
+      </table>
+      <table class="totals grand">
+        <tr><td>TOTAL</td><td class="r">${peso(sale.total)}</td></tr>
+      </table>
+      <table class="totals">
+        <tr><td>Paid (${(sale.payment_method || '').toUpperCase()})</td><td class="r">${peso(sale.amount_paid)}</td></tr>
         <tr><td>Change</td><td class="r">${peso(sale.change)}</td></tr>
       </table>
       <hr>
-      <div class="c">Thank you for shopping!<br>This serves as your official receipt.</div>
+      <div class="c foot">
+        Thank you for shopping!<br>
+        This serves as your official receipt.<br>
+        — Customer Copy —
+      </div>
     </body></html>`;
 
     const iframe = document.createElement('iframe');

@@ -9,8 +9,10 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 const blank = { name: '', contact_person: '', phone: '', email: '', address: '', is_active: true };
 
@@ -82,8 +84,12 @@ export default function Index({ suppliers, filters }) {
                         <TableBody>
                             {suppliers.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No suppliers found.
+                                    <TableCell colSpan={7} sx={{ border: 0 }}>
+                                        <EmptyState icon={<LocalShippingOutlinedIcon />}
+                                            title="No suppliers found"
+                                            hint={filters.search
+                                                ? 'Try a different search.'
+                                                : 'Click "Add Supplier" to create your first one.'} />
                                     </TableCell>
                                 </TableRow>
                             )}

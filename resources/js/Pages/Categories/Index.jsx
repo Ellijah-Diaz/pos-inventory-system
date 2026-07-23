@@ -9,8 +9,10 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 export default function Index({ categories, filters }) {
     const [search, setSearch] = useState(filters.search || '');
@@ -93,8 +95,12 @@ export default function Index({ categories, filters }) {
                         <TableBody>
                             {categories.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No categories found.
+                                    <TableCell colSpan={5} sx={{ border: 0 }}>
+                                        <EmptyState icon={<CategoryOutlinedIcon />}
+                                            title="No categories found"
+                                            hint={filters.search
+                                                ? 'Try a different search.'
+                                                : 'Click "Add Category" to create your first one.'} />
                                     </TableCell>
                                 </TableRow>
                             )}

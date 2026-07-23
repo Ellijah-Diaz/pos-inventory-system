@@ -12,8 +12,11 @@ import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import ImageIcon from '@mui/icons-material/Image';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 import Receipt from './Receipt';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -109,6 +112,30 @@ export default function Index({ products, categories }) {
         });
     };
 
+    // Keyboard shortcuts — F2 focus search, F9 charge, Esc clear search/cart.
+    // Latest state/handlers are kept in a ref so the single window listener never goes stale.
+    const keysRef = useRef({});
+    keysRef.current = { checkout, clearCart, query, receiptOpen: !!receipt };
+    useEffect(() => {
+        const onKey = (e) => {
+            const k = keysRef.current;
+            if (e.key === 'F2') {
+                e.preventDefault();
+                searchRef.current?.focus();
+                searchRef.current?.select();
+            } else if (e.key === 'F9') {
+                e.preventDefault();
+                if (!k.receiptOpen && !Swal.isVisible()) k.checkout();
+            } else if (e.key === 'Escape') {
+                if (k.receiptOpen || Swal.isVisible()) return; // let the dialog handle it
+                if (k.query) setQuery('');                     // 1st Esc: clear search
+                else k.clearCart();                            // 2nd Esc: clear cart (confirms)
+            }
+        };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
+
     const quickCash = [total, 20, 50, 100, 200, 500, 1000]
         .filter((v, idx) => idx === 0 || v >= total)
         .filter((v, i, a) => a.indexOf(v) === i)
@@ -123,7 +150,7 @@ export default function Index({ products, categories }) {
                         inputRef={searchRef} fullWidth size="small" autoFocus
                         placeholder="Scan barcode or search name / SKU…  (Enter to add)"
                         value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={onSearchKey}
-                        InputProps={{ startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> }}
+                        slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon /></InputAdornment> } }}
                         sx={{ mb: 2 }}
                     />
 
@@ -141,9 +168,11 @@ export default function Index({ products, categories }) {
                         maxHeight: '70vh', overflowY: 'auto', pr: 0.5,
                     }}>
                         {filtered.length === 0 && (
-                            <Typography color="text.secondary" sx={{ gridColumn: '1/-1', py: 4, textAlign: 'center' }}>
-                                No products match.
-                            </Typography>
+                            <Box sx={{ gridColumn: '1/-1' }}>
+                                <EmptyState icon={<SearchOffIcon />}
+                                    title="No products match"
+                                    hint="Try a different name, SKU, or category." />
+                            </Box>
                         )}
                         {filtered.map((p) => {
                             const available = p.stock_quantity - cartQtyOf(p.id);
@@ -196,9 +225,9 @@ export default function Index({ products, categories }) {
 
                     <Box sx={{ maxHeight: '40vh', overflowY: 'auto', my: 1 }}>
                         {cart.length === 0 && (
-                            <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-                                Cart is empty. Tap a product to add.
-                            </Typography>
+                            <EmptyState icon={<ShoppingCartOutlinedIcon />}
+                                title="Cart is empty"
+                                hint="Tap a product or scan a barcode to add it." />
                         )}
                         {cart.map((i) => (
                             <Box key={i.id}
@@ -251,7 +280,7 @@ export default function Index({ products, categories }) {
                             <Typography variant="body2">Discount</Typography>
                             <TextField size="small" type="number" value={discount}
                                 onChange={(e) => setDiscount(e.target.value)} placeholder="0.00"
-                                InputProps={{ startAdornment: <InputAdornment position="start">₱</InputAdornment> }}
+                                slotProps={{ input: { startAdornment: <InputAdornment position="start">₱</InputAdornment> } }}
                                 sx={{ width: 130 }} />
                         </Box>
                         <Divider sx={{ my: 0.5 }} />
@@ -277,7 +306,7 @@ export default function Index({ products, categories }) {
                         <>
                             <TextField fullWidth size="small" type="number" label="Amount tendered" value={paid}
                                 onChange={(e) => setPaid(e.target.value)} sx={{ mt: 2.5 }}
-                                InputProps={{ startAdornment: <InputAdornment position="start">₱</InputAdornment> }} />
+                                slotProps={{ input: { startAdornment: <InputAdornment position="start">₱</InputAdornment> } }} />
                             <Stack direction="row" sx={{ mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
                                 {quickCash.map((v, i) => (
                                     <Chip key={i} label={i === 0 ? 'Exact' : peso(v)} variant="outlined"
@@ -299,6 +328,11 @@ export default function Index({ products, categories }) {
                         sx={{ mt: 3, py: 1.4 }} disabled={!canCheckout} onClick={checkout}>
                         {processing ? 'Processing…' : `Charge ${peso(total)}`}
                     </Button>
+
+                    <Typography variant="caption" color="text.secondary" display="block"
+                        textAlign="center" sx={{ mt: 1.5 }}>
+                        F2 Search &nbsp;·&nbsp; F9 Charge &nbsp;·&nbsp; Esc Clear
+                    </Typography>
                 </Paper>
             </Box>
 

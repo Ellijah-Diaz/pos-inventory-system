@@ -9,7 +9,9 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PaidIcon from '@mui/icons-material/Paid';
 import DiscountIcon from '@mui/icons-material/Discount';
+import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -97,8 +99,12 @@ export default function Index({ sales, filters, summary }) {
                         <TableBody>
                             {sales.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={8} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No sales found.
+                                    <TableCell colSpan={8} sx={{ border: 0 }}>
+                                        <EmptyState icon={<ReceiptLongOutlinedIcon />}
+                                            title="No sales found"
+                                            hint={filters.search || filters.from || filters.to
+                                                ? 'Try widening the date range or clearing the invoice search.'
+                                                : 'Completed sales from the POS will appear here.'} />
                                     </TableCell>
                                 </TableRow>
                             )}

@@ -1,17 +1,21 @@
+import { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import {
-    Alert, Button, Checkbox, FormControlLabel, InputAdornment,
+    Alert, Button, Checkbox, FormControlLabel, IconButton, InputAdornment,
     Stack, TextField, Typography,
 } from '@mui/material';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LoginIcon from '@mui/icons-material/Login';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import AuthShell from '@/Layouts/AuthShell';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '', password: '', remember: false,
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
@@ -35,17 +39,32 @@ export default function Login({ status, canResetPassword }) {
                         label="Email" type="email" fullWidth autoFocus autoComplete="username"
                         value={data.email} onChange={(e) => setData('email', e.target.value)}
                         error={!!errors.email} helperText={errors.email}
-                        InputProps={{ startAdornment: (
+                        slotProps={{ input: { startAdornment: (
                             <InputAdornment position="start"><EmailOutlinedIcon fontSize="small" /></InputAdornment>
-                        ) }}
+                        ) } }}
                     />
                     <TextField
-                        label="Password" type="password" fullWidth autoComplete="current-password"
+                        label="Password" type={showPassword ? 'text' : 'password'} fullWidth autoComplete="current-password"
                         value={data.password} onChange={(e) => setData('password', e.target.value)}
                         error={!!errors.password} helperText={errors.password}
-                        InputProps={{ startAdornment: (
-                            <InputAdornment position="start"><LockOutlinedIcon fontSize="small" /></InputAdornment>
-                        ) }}
+                        slotProps={{ input: {
+                            startAdornment: (
+                                <InputAdornment position="start"><LockOutlinedIcon fontSize="small" /></InputAdornment>
+                            ),
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                                        onClick={() => setShowPassword((v) => !v)}
+                                        edge="end" size="small" tabIndex={-1}
+                                    >
+                                        {showPassword
+                                            ? <VisibilityOffOutlinedIcon fontSize="small" />
+                                            : <VisibilityOutlinedIcon fontSize="small" />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        } }}
                     />
 
                     <Stack direction="row" alignItems="center" justifyContent="space-between">

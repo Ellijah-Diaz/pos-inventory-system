@@ -32,9 +32,9 @@ export default function ForgotPassword({ status }) {
                         label="Email" type="email" fullWidth autoFocus autoComplete="username"
                         value={data.email} onChange={(e) => setData('email', e.target.value)}
                         error={!!errors.email} helperText={errors.email}
-                        InputProps={{ startAdornment: (
+                        slotProps={{ input: { startAdornment: (
                             <InputAdornment position="start"><EmailOutlinedIcon fontSize="small" /></InputAdornment>
-                        ) }}
+                        ) } }}
                     />
 
                     <Button type="submit" variant="contained" size="large" fullWidth

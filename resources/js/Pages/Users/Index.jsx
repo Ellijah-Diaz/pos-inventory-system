@@ -13,8 +13,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import GroupIcon from '@mui/icons-material/Group';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 const blank = { name: '', email: '', role: 'cashier', password: '', password_confirmation: '', is_active: true };
 
@@ -113,8 +115,12 @@ export default function Index({ users, filters, stats }) {
                         <TableBody>
                             {users.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No users found.
+                                    <TableCell colSpan={5} sx={{ border: 0 }}>
+                                        <EmptyState icon={<GroupOutlinedIcon />}
+                                            title="No users found"
+                                            hint={filters.search || filters.role
+                                                ? 'Try clearing the search or role filter.'
+                                                : 'Click "Add User" to create one.'} />
                                     </TableCell>
                                 </TableRow>
                             )}

@@ -11,7 +11,9 @@ import SwapVertIcon from '@mui/icons-material/SwapVert';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import SwapVertOutlinedIcon from '@mui/icons-material/SwapVertOutlined';
 import AppLayout from '@/Layouts/AppLayout';
+import EmptyState from '@/Components/EmptyState';
 
 const typeMeta = {
     in:         { label: 'Stock In',    color: 'success' },
@@ -139,8 +141,10 @@ export default function Index({ movements, products, lowStock, filters, stats })
                         <TableBody>
                             {movements.data.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} align="center" sx={{ py: 4, color: 'text.secondary' }}>
-                                        No stock movements yet.
+                                    <TableCell colSpan={7} sx={{ border: 0 }}>
+                                        <EmptyState icon={<SwapVertOutlinedIcon />}
+                                            title="No stock movements yet"
+                                            hint='Use "New Movement" to record stock in, out, or an adjustment.' />
                                     </TableCell>
                                 </TableRow>
                             )}
