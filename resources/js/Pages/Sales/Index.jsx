@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { router, usePage } from '@inertiajs/react';
 import {
     Box, Button, Chip, CircularProgress, Dialog, DialogContent, DialogTitle,
-    Divider, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer,
-    TableHead, TablePagination, TableRow, TextField, Tooltip, Typography,
+    Divider, IconButton, MenuItem, Paper, Stack, Table, TableBody, TableCell,
+    TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, Typography,
 } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import BlockIcon from '@mui/icons-material/Block';
@@ -35,12 +35,14 @@ export default function Index({ sales, filters, summary }) {
     const [search, setSearch] = useState(filters.search || '');
     const [from, setFrom] = useState(filters.from || '');
     const [to, setTo] = useState(filters.to || '');
+    const [status, setStatus] = useState(filters.status || '');
     const [detail, setDetail] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const apply = (extra = {}) =>
         router.get('/sales', {
-            search: search || undefined, from: from || undefined, to: to || undefined, ...extra,
+            search: search || undefined, from: from || undefined, to: to || undefined,
+            status: status || undefined, ...extra,
         }, { preserveState: true, replace: true });
 
     useEffect(() => {
@@ -101,9 +103,19 @@ export default function Index({ sales, filters, summary }) {
                         value={from} onChange={(e) => setFrom(e.target.value)} />
                     <TextField size="small" type="date" label="To" slotProps={{ inputLabel: { shrink: true } }}
                         value={to} onChange={(e) => setTo(e.target.value)} />
+                    <TextField size="small" select label="Status" sx={{ minWidth: 140 }}
+                        value={status}
+                        onChange={(e) => { setStatus(e.target.value); apply({ status: e.target.value || undefined }); }}>
+                        <MenuItem value="">All</MenuItem>
+                        <MenuItem value="completed">Completed</MenuItem>
+                        <MenuItem value="voided">Voided</MenuItem>
+                    </TextField>
                     <Button variant="contained" onClick={() => apply()}>Filter</Button>
-                    {(from || to || search) && (
-                        <Button onClick={() => { setSearch(''); setFrom(''); setTo(''); router.get('/sales'); }}>Clear</Button>
+                    {(from || to || search || status) && (
+                        <Button onClick={() => {
+                            setSearch(''); setFrom(''); setTo(''); setStatus('');
+                            router.get('/sales');
+                        }}>Clear</Button>
                     )}
                 </Stack>
 
@@ -127,8 +139,8 @@ export default function Index({ sales, filters, summary }) {
                                     <TableCell colSpan={8} sx={{ border: 0 }}>
                                         <EmptyState icon={<ReceiptLongOutlinedIcon />}
                                             title="No sales found"
-                                            hint={filters.search || filters.from || filters.to
-                                                ? 'Try widening the date range or clearing the invoice search.'
+                                            hint={filters.search || filters.from || filters.to || filters.status
+                                                ? 'Try widening the date range or clearing the filters.'
                                                 : 'Completed sales from the POS will appear here.'} />
                                     </TableCell>
                                 </TableRow>

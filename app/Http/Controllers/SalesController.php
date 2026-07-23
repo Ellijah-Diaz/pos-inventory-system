@@ -17,11 +17,18 @@ class SalesController extends Controller
         $search = $request->string('search')->toString();
         $from   = $request->date('from');
         $to     = $request->date('to');
+        $status = $request->string('status')->toString();
+
+        // Only accept known statuses; anything else means "all"
+        if (! in_array($status, ['completed', 'voided'], true)) {
+            $status = '';
+        }
 
         $base = Sale::query()
             ->when($search, fn ($q) => $q->where('invoice_number', 'like', "%{$search}%"))
             ->when($from, fn ($q) => $q->whereDate('created_at', '>=', $from))
-            ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to));
+            ->when($to, fn ($q) => $q->whereDate('created_at', '<=', $to))
+            ->when($status, fn ($q) => $q->where('status', $status));
 
         $sales = (clone $base)
             ->with('user:id,name')
@@ -30,17 +37,22 @@ class SalesController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        // Summary follows the status filter: with an explicit status it totals
+        // exactly the rows shown; otherwise revenue counts completed sales only.
+        $summaryBase = fn () => $status ? (clone $base) : (clone $base)->where('status', 'completed');
+
         return Inertia::render('Sales/Index', [
             'sales'   => $sales,
             'filters' => [
                 'search' => $search,
                 'from'   => $from?->toDateString(),
                 'to'     => $to?->toDateString(),
+                'status' => $status ?: null,
             ],
             'summary' => [
-                'count'    => (clone $base)->where('status', 'completed')->count(),
-                'revenue'  => round((float) (clone $base)->where('status', 'completed')->sum('total'), 2),
-                'discount' => round((float) (clone $base)->where('status', 'completed')->sum('discount'), 2),
+                'count'    => $summaryBase()->count(),
+                'revenue'  => round((float) $summaryBase()->sum('total'), 2),
+                'discount' => round((float) $summaryBase()->sum('discount'), 2),
             ],
         ]);
     }
