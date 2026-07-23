@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 export default function Index({ categories, filters }) {
@@ -135,7 +136,10 @@ export default function Index({ categories, filters }) {
             {/* Create / Edit dialog */}
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <form onSubmit={submit}>
-                    <DialogTitle>{editing ? 'Edit Category' : 'Add Category'}</DialogTitle>
+                    <DialogTitle>
+                        {editing ? 'Edit Category' : 'Add Category'}
+                        <DialogCloseButton onClose={() => setOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Stack spacing={2} mt={1}>
                             <TextField label="Name" fullWidth required value={form.data.name}

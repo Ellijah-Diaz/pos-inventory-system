@@ -18,6 +18,7 @@ import ImageIcon from '@mui/icons-material/Image';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -204,7 +205,10 @@ export default function Index({ products, categories, suppliers, filters, stats 
             {/* Create / Edit dialog */}
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
                 <form onSubmit={submit}>
-                    <DialogTitle>{editing ? 'Edit Product' : 'Add Product'}</DialogTitle>
+                    <DialogTitle>
+                        {editing ? 'Edit Product' : 'Add Product'}
+                        <DialogCloseButton onClose={() => setOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Grid container spacing={2} mt={0}>
                             <Grid size={{ xs: 12 }}>

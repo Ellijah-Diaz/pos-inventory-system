@@ -12,6 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 const blank = { name: '', contact_person: '', phone: '', email: '', address: '', is_active: true };
@@ -121,7 +122,10 @@ export default function Index({ suppliers, filters }) {
 
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <form onSubmit={submit}>
-                    <DialogTitle>{editing ? 'Edit Supplier' : 'Add Supplier'}</DialogTitle>
+                    <DialogTitle>
+                        {editing ? 'Edit Supplier' : 'Add Supplier'}
+                        <DialogCloseButton onClose={() => setOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Stack spacing={2} mt={1}>
                             <TextField label="Name" fullWidth required value={form.data.name}

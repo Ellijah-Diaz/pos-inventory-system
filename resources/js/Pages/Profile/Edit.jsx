@@ -8,6 +8,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 
 export default function Edit({ mustVerifyEmail, status }) {
     const user = usePage().props.auth.user;
@@ -152,7 +153,10 @@ export default function Edit({ mustVerifyEmail, status }) {
             {/* Delete confirmation dialog */}
             <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} fullWidth maxWidth="xs">
                 <form onSubmit={submitDelete}>
-                    <DialogTitle>Delete your account?</DialogTitle>
+                    <DialogTitle>
+                        Delete your account?
+                        <DialogCloseButton onClose={() => setDeleteOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                             This is permanent. Enter your password to confirm.

@@ -16,6 +16,7 @@ import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Swal from 'sweetalert2';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 const blank = { name: '', email: '', role: 'cashier', password: '', password_confirmation: '', is_active: true };
@@ -163,7 +164,10 @@ export default function Index({ users, filters, stats }) {
             {/* Create / Edit dialog */}
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <form onSubmit={submit}>
-                    <DialogTitle>{editing ? 'Edit User' : 'Add User'}</DialogTitle>
+                    <DialogTitle>
+                        {editing ? 'Edit User' : 'Add User'}
+                        <DialogCloseButton onClose={() => setOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Stack spacing={2} mt={1}>
                             <TextField label="Full Name" fullWidth required value={form.data.name}

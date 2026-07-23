@@ -1,6 +1,7 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, Divider, Stack, Typography } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
@@ -87,6 +88,7 @@ export default function Receipt({ sale, open, onClose }) {
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+            <DialogCloseButton onClose={onClose} />
             <DialogContent>
                 <Stack alignItems="center" spacing={1} mb={1}>
                     <CheckCircleIcon color="success" sx={{ fontSize: 48 }} />

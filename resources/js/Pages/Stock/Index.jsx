@@ -13,6 +13,7 @@ import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SwapVertOutlinedIcon from '@mui/icons-material/SwapVertOutlined';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 const typeMeta = {
@@ -188,7 +189,10 @@ export default function Index({ movements, products, lowStock, filters, stats })
             {/* New movement dialog */}
             <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
                 <form onSubmit={submit}>
-                    <DialogTitle>New Stock Movement</DialogTitle>
+                    <DialogTitle>
+                        New Stock Movement
+                        <DialogCloseButton onClose={() => setOpen(false)} />
+                    </DialogTitle>
                     <DialogContent>
                         <Stack spacing={2} mt={1}>
                             <FormControl fullWidth required error={!!form.errors.product_id}>

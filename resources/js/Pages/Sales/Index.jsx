@@ -13,6 +13,7 @@ import PaidIcon from '@mui/icons-material/Paid';
 import DiscountIcon from '@mui/icons-material/Discount';
 import ReceiptLongOutlinedIcon from '@mui/icons-material/ReceiptLongOutlined';
 import AppLayout from '@/Layouts/AppLayout';
+import DialogCloseButton from '@/Components/DialogCloseButton';
 import EmptyState from '@/Components/EmptyState';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -187,6 +188,7 @@ export default function Index({ sales, filters, summary }) {
             <Dialog open={!!detail} onClose={() => setDetail(null)} maxWidth="xs" fullWidth>
                 <DialogTitle>
                     {loading ? 'Loading…' : detail?.invoice_number}
+                    <DialogCloseButton onClose={() => setDetail(null)} />
                 </DialogTitle>
                 <DialogContent>
                     {loading || !detail?.invoice_number ? (
