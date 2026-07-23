@@ -1,0 +1,178 @@
+import { useEffect, useState } from 'react';
+import { router } from '@inertiajs/react';
+import {
+    Box, Button, Chip, CircularProgress, Dialog, DialogContent, DialogTitle,
+    Divider, IconButton, Paper, Stack, Table, TableBody, TableCell, TableContainer,
+    TableHead, TablePagination, TableRow, TextField, Tooltip, Typography,
+} from '@mui/material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import PaidIcon from '@mui/icons-material/Paid';
+import DiscountIcon from '@mui/icons-material/Discount';
+import AppLayout from '@/Layouts/AppLayout';
+
+const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function Summary({ icon, label, value, color }) {
+    return (
+        <Paper sx={{ p: 2, flex: 1, minWidth: 180, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Box sx={{ bgcolor: `${color}.main`, color: '#fff', p: 1.2, borderRadius: 2, display: 'flex' }}>{icon}</Box>
+            <Box>
+                <Typography variant="h6" fontWeight={700}>{value}</Typography>
+                <Typography variant="body2" color="text.secondary">{label}</Typography>
+            </Box>
+        </Paper>
+    );
+}
+
+export default function Index({ sales, filters, summary }) {
+    const [search, setSearch] = useState(filters.search || '');
+    const [from, setFrom] = useState(filters.from || '');
+    const [to, setTo] = useState(filters.to || '');
+    const [detail, setDetail] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const apply = (extra = {}) =>
+        router.get('/sales', {
+            search: search || undefined, from: from || undefined, to: to || undefined, ...extra,
+        }, { preserveState: true, replace: true });
+
+    useEffect(() => {
+        const t = setTimeout(() => {
+            if (search === (filters.search || '')) return;
+            apply();
+        }, 350);
+        return () => clearTimeout(t);
+    }, [search]);
+
+    const openDetail = async (id) => {
+        setLoading(true);
+        setDetail({});
+        try {
+            const { data } = await window.axios.get(`/sales/${id}`);
+            setDetail(data);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changePage = (_e, p) => apply({ page: p + 1 });
+
+    return (
+        <AppLayout title="Sales" header={<Typography variant="h6" fontWeight={700}>Sales History</Typography>}>
+            <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', gap: 2, mb: 3 }}>
+                <Summary icon={<ReceiptLongIcon />} label="Transactions" value={summary.count} color="primary" />
+                <Summary icon={<PaidIcon />} label="Total Revenue" value={peso(summary.revenue)} color="success" />
+                <Summary icon={<DiscountIcon />} label="Total Discounts" value={peso(summary.discount)} color="secondary" />
+            </Stack>
+
+            <Paper sx={{ p: 2 }}>
+                <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems={{ md: 'center' }} mb={2}>
+                    <TextField size="small" label="Search invoice #" value={search}
+                        onChange={(e) => setSearch(e.target.value)} sx={{ width: { xs: '100%', sm: 240 } }} />
+                    <TextField size="small" type="date" label="From" slotProps={{ inputLabel: { shrink: true } }}
+                        value={from} onChange={(e) => setFrom(e.target.value)} />
+                    <TextField size="small" type="date" label="To" slotProps={{ inputLabel: { shrink: true } }}
+                        value={to} onChange={(e) => setTo(e.target.value)} />
+                    <Button variant="contained" onClick={() => apply()}>Filter</Button>
+                    {(from || to || search) && (
+                        <Button onClick={() => { setSearch(''); setFrom(''); setTo(''); router.get('/sales'); }}>Clear</Button>
+                    )}
+                </Stack>
+
+                <TableContainer sx={{ overflowX: 'auto' }}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell><b>Invoice #</b></TableCell>
+                                <TableCell><b>Date</b></TableCell>
+                                <TableCell><b>Cashier</b></TableCell>
+                                <TableCell align="center"><b>Items</b></TableCell>
+                                <TableCell align="center"><b>Payment</b></TableCell>
+                                <TableCell align="right"><b>Total</b></TableCell>
+                                <TableCell align="center"><b>Status</b></TableCell>
+                                <TableCell align="right"><b></b></TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {sales.data.length === 0 && (
+                                <TableRow>
+                                    <TableCell colSpan={8} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                                        No sales found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            {sales.data.map((s) => (
+                                <TableRow key={s.id} hover>
+                                    <TableCell sx={{ fontFamily: 'monospace' }}>{s.invoice_number}</TableCell>
+                                    <TableCell sx={{ whiteSpace: 'nowrap' }}>{new Date(s.created_at).toLocaleString()}</TableCell>
+                                    <TableCell>{s.user?.name || '—'}</TableCell>
+                                    <TableCell align="center">{s.items_count}</TableCell>
+                                    <TableCell align="center"><Chip size="small" variant="outlined" label={s.payment_method} /></TableCell>
+                                    <TableCell align="right" sx={{ fontWeight: 700 }}>{peso(s.total)}</TableCell>
+                                    <TableCell align="center">
+                                        <Chip size="small" label={s.status}
+                                            color={s.status === 'completed' ? 'success' : 'default'} />
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        <Tooltip title="View details">
+                                            <IconButton size="small" onClick={() => openDetail(s.id)}><VisibilityIcon fontSize="small" /></IconButton>
+                                        </Tooltip>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+
+                <TablePagination component="div" count={sales.total}
+                    page={sales.current_page - 1} rowsPerPage={sales.per_page}
+                    rowsPerPageOptions={[sales.per_page]} onPageChange={changePage} />
+            </Paper>
+
+            {/* Detail modal */}
+            <Dialog open={!!detail} onClose={() => setDetail(null)} maxWidth="xs" fullWidth>
+                <DialogTitle>
+                    {loading ? 'Loading…' : detail?.invoice_number}
+                </DialogTitle>
+                <DialogContent>
+                    {loading || !detail?.invoice_number ? (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}><CircularProgress /></Box>
+                    ) : (
+                        <>
+                            <Typography variant="body2" color="text.secondary" mb={1}>
+                                {detail.created_at} · {detail.cashier || '—'} · {detail.payment_method}
+                            </Typography>
+                            <Divider sx={{ mb: 1 }} />
+                            <Stack spacing={0.5}>
+                                {detail.items.map((i, idx) => (
+                                    <Box key={idx} sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body2">{i.quantity} × {i.name}
+                                            <Typography component="span" variant="caption" color="text.secondary"> @ {peso(i.price)}</Typography>
+                                        </Typography>
+                                        <Typography variant="body2">{peso(i.subtotal)}</Typography>
+                                    </Box>
+                                ))}
+                            </Stack>
+                            <Divider sx={{ my: 1 }} />
+                            <Row label="Subtotal" value={peso(detail.subtotal)} />
+                            {detail.discount > 0 && <Row label="Discount" value={`-${peso(detail.discount)}`} />}
+                            <Row label="Total" value={peso(detail.total)} bold />
+                            <Row label="Amount Paid" value={peso(detail.amount_paid)} />
+                            <Row label="Change" value={peso(detail.change)} />
+                        </>
+                    )}
+                </DialogContent>
+            </Dialog>
+        </AppLayout>
+    );
+}
+
+function Row({ label, value, bold }) {
+    return (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.25 }}>
+            <Typography variant="body2" fontWeight={bold ? 700 : 400} color={bold ? 'text.primary' : 'text.secondary'}>{label}</Typography>
+            <Typography variant="body2" fontWeight={bold ? 700 : 400}>{value}</Typography>
+        </Box>
+    );
+}

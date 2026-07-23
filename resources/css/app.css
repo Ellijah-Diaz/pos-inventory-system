@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ | MUI outlined inputs draw their own rounded border + focus highlight.
+ | @tailwindcss/forms (bundled by Breeze) also adds a square box-shadow "ring"
+ | to native inputs on focus, which appeared as a second rectangle inside MUI's
+ | rounded field. Suppress that ring on MUI inputs so only MUI's highlight shows.
+ | Applies app-wide (login, POS, Products, Stock, etc.).
+ */
+.MuiInputBase-input {
+    box-shadow: none !important;
+}
+
+/*
+ | Chrome autofill fix.
+ | When the user picks a remembered value from Chrome's autofill dropdown,
+ | Chrome force-paints the input background (white / pale blue) with internal
+ | styles that ignore background-color. The only reliable override is a large
+ | inset box-shadow in the field's surface colour + -webkit-text-fill-color.
+ | Selector is more specific than the box-shadow reset above so it wins.
+ | Applies everywhere MUI inputs are used (login, forgot password, dialogs...).
+ */
+.MuiInputBase-input:-webkit-autofill,
+.MuiInputBase-input:-webkit-autofill:hover,
+.MuiInputBase-input:-webkit-autofill:focus,
+.MuiInputBase-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a;
+    border-radius: inherit;
+    transition: background-color 9999s ease-out 0s; /* belt & braces: delay Chrome's bg paint */
+}
+html[data-theme='dark'] .MuiInputBase-input:-webkit-autofill,
+html[data-theme='dark'] .MuiInputBase-input:-webkit-autofill:hover,
+html[data-theme='dark'] .MuiInputBase-input:-webkit-autofill:focus,
+html[data-theme='dark'] .MuiInputBase-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+    -webkit-text-fill-color: #e2e8f0 !important;
+    caret-color: #e2e8f0;
+}
+
+/*
+ | Dark-mode styling for SweetAlert2 confirmation dialogs (delete / clear cart).
+ | data-theme is set on <html> by the ColorModeProvider.
+ */
+html[data-theme='dark'] .swal2-popup {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+html[data-theme='dark'] .swal2-title,
+html[data-theme='dark'] .swal2-html-container {
+    color: #e2e8f0;
+}
+
+/*
+ | MUI outlined label overlap fix.
+ | The floated (shrunk) label can sit on top of the field's border line.
+ | Give it a background matching the field surface so it masks the border
+ | cleanly, regardless of the notch legend width. Theme-aware.
+ */
+.MuiInputLabel-outlined.MuiInputLabel-shrink {
+    padding: 0 6px;
+    margin-left: -2px;
+    background-color: #ffffff;
+}
+html[data-theme='dark'] .MuiInputLabel-outlined.MuiInputLabel-shrink {
+    background-color: #1e293b;
+}
+
+/*
+ | MUI zeroes out DialogContent's top padding when it follows a DialogTitle,
+ | so the first field's floated (shrunk) label collides with the dialog header.
+ | Restore some top padding so the label clears the title. Applies to all dialogs.
+ */
+.MuiDialogTitle-root + .MuiDialogContent-root {
+    padding-top: 16px !important;
+}
+
+/*
+ | Theme-aware scrollbars — applies everywhere (sidebar, POS grid, cart,
+ | tables, dialogs, and the main window). Dark variant keyed off <html data-theme>.
+ */
+* {
+    scrollbar-width: thin;                       /* Firefox */
+    scrollbar-color: #cbd5e1 transparent;        /* thumb / track */
+}
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;                    /* slate-300 */
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;                    /* slate-400 */
+}
+
+/* Dark mode */
+html[data-theme='dark'] * {
+    scrollbar-color: #475569 transparent;         /* slate-600 */
+}
+html[data-theme='dark'] *::-webkit-scrollbar-thumb {
+    background-color: #475569;                     /* slate-600 */
+}
+html[data-theme='dark'] *::-webkit-scrollbar-thumb:hover {
+    background-color: #64748b;                     /* slate-500 */
+}
+
