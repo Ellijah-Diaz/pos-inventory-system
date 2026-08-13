@@ -49,7 +49,7 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                 {/* Account summary */}
                 <Paper sx={{ p: 3, mb: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Box sx={{ width: 56, height: 56, borderRadius: '50%', bgcolor: 'primary.main', color: '#fff',
+                    <Box sx={{ width: 56, height: 56, borderRadius: '50%', bgcolor: 'primary.main', color: 'primary.contrastText',
                         display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 700 }}>
                         {user.name?.charAt(0)?.toUpperCase()}
                     </Box>

@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import {
-    Box, Button, Chip, Divider, LinearProgress, Paper, Stack, Typography,
+    Box, Button, Chip, Divider, LinearProgress, Paper, Stack, Typography, useTheme,
 } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
 import PaidIcon from '@mui/icons-material/Paid';
@@ -11,12 +11,11 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AppLayout from '@/Layouts/AppLayout';
 
 const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-const PRIMARY = '#2563eb';
 
 function Kpi({ icon, label, value, color = 'primary' }) {
     return (
         <Paper sx={{ p: 2.5, flex: 1, minWidth: 200, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ bgcolor: `${color}.main`, color: '#fff', p: 1.4, borderRadius: 2, display: 'flex' }}>{icon}</Box>
+            <Box sx={{ bgcolor: `${color}.main`, color: `${color}.contrastText`, p: 1.4, borderRadius: 2, display: 'flex' }}>{icon}</Box>
             <Box>
                 <Typography variant="h5" fontWeight={700}>{value}</Typography>
                 <Typography variant="body2" color="text.secondary">{label}</Typography>
@@ -27,6 +26,11 @@ function Kpi({ icon, label, value, color = 'primary' }) {
 
 export default function Dashboard({ auth, stats, trend, topProducts, lowStock, recentSales }) {
     const maxQty = Math.max(1, ...topProducts.map((p) => Number(p.qty)));
+
+    // The bars used to be a hard-coded hex, which meant they stayed the light
+    // mode violet on a near-black chart. x-charts takes a plain colour string,
+    // so read the live one off the theme instead.
+    const primary = useTheme().palette.primary.main;
 
     return (
         <AppLayout title="Dashboard" header={<Typography variant="h6" fontWeight={700}>Dashboard</Typography>}>
@@ -55,7 +59,7 @@ export default function Dashboard({ auth, stats, trend, topProducts, lowStock, r
                         hideLegend
                         borderRadius={6}
                         xAxis={[{ scaleType: 'band', data: trend.map((d) => d.label) }]}
-                        series={[{ data: trend.map((d) => d.revenue), label: 'Revenue', color: PRIMARY,
+                        series={[{ data: trend.map((d) => d.revenue), label: 'Revenue', color: primary,
                             valueFormatter: (v) => peso(v ?? 0) }]}
                         margin={{ left: 70 }}
                     />

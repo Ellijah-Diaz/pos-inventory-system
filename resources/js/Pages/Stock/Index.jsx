@@ -25,7 +25,7 @@ const typeMeta = {
 function StatCard({ icon, label, value, color }) {
     return (
         <Paper sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ bgcolor: `${color}.main`, color: '#fff', p: 1.2, borderRadius: 2, display: 'flex' }}>{icon}</Box>
+            <Box sx={{ bgcolor: `${color}.main`, color: `${color}.contrastText`, p: 1.2, borderRadius: 2, display: 'flex' }}>{icon}</Box>
             <Box>
                 <Typography variant="h5" fontWeight={700}>{value}</Typography>
                 <Typography variant="body2" color="text.secondary">{label}</Typography>
