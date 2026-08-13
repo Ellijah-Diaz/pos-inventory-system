@@ -13,15 +13,28 @@ use Illuminate\Support\Facades\DB;
 class SalesDemoSeeder extends Seeder
 {
     /**
+     * How far back to seed — and, not by coincidence, the window the dashboard
+     * chart reports on. The two have to agree or the chart opens empty.
+     */
+    private const DAYS = 7;
+
+    /**
      * Generate sample completed sales across the last 7 days
      * so the dashboard and reports have data to display.
      */
     public function run(): void
     {
-        // Only skip once the store already has a meaningful history;
+        // Only skip once the *demo window* already has a meaningful history;
         // this keeps any real sales you've made and just enriches the demo.
-        if (Sale::count() > 10) {
-            $this->command?->warn('Enough sales already exist — skipping demo seeding.');
+        //
+        // Counting every sale ever made was wrong. The dashboard and the
+        // revenue chart only look back seven days, so a store with a hundred
+        // sales from last month still opens on an empty chart and ₱0.00 —
+        // and the old guard skipped seeding in exactly that case, which is
+        // the one case where seeding is the whole point.
+        if (Sale::where('created_at', '>=', now()->subDays(self::DAYS))->count() > 10) {
+            $this->command?->warn('Enough recent sales already exist — skipping demo seeding.');
+
             return;
         }
 
@@ -33,8 +46,8 @@ class SalesDemoSeeder extends Seeder
             return;
         }
 
-        // 2–4 sales per day for the past 7 days
-        for ($daysAgo = 6; $daysAgo >= 0; $daysAgo--) {
+        // 2–4 sales per day for the past week
+        for ($daysAgo = self::DAYS - 1; $daysAgo >= 0; $daysAgo--) {
             $salesToday = rand(2, 4);
 
             for ($n = 0; $n < $salesToday; $n++) {

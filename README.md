@@ -3,12 +3,12 @@
 [![tests](https://github.com/Ellijah-Diaz/pos-inventory-system/actions/workflows/tests.yml/badge.svg)](https://github.com/Ellijah-Diaz/pos-inventory-system/actions/workflows/tests.yml)
 ![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?logo=php&logoColor=white)
 ![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?logo=laravel&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![MUI](https://img.shields.io/badge/MUI-9-007FFF?logo=mui&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
 
 A full-featured **Point of Sale + Inventory Management system** for small retail —
-built as a single-folder monolith with **Laravel 12 + Inertia.js + React 19 + Material UI**.
+built as a single-folder monolith with **Laravel 12 + Inertia.js + React 18 + Material UI**.
 Covers the complete retail loop: products in → sales out → stock reconciled → day closed.
 
 > **65 automated tests · 201 assertions** — checkout, stock, voids, reports, validation, and role access are all covered.
@@ -75,7 +75,7 @@ Covers the complete retail loop: products in → sales out → stock reconciled 
 |---|---|
 | Backend | Laravel 12 (PHP 8.2), Breeze (session auth) |
 | Bridge | Inertia.js v2 — no separate API, controllers render React pages directly |
-| Frontend | React 19 (JSX), Material UI v9, Tailwind CSS 4 |
+| Frontend | React 18 (JSX), Material UI v9, Tailwind CSS 3 |
 | Database | MySQL 8 |
 | Build | Vite 7 |
 | Testing | Pest (feature-tested against a real MySQL test DB) |
