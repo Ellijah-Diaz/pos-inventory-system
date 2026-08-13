@@ -117,7 +117,14 @@ npm run build
 php artisan serve             # + npm run dev for hot reload
 ```
 
-**Demo accounts** (after seeding): `admin@pos.test` / `password` · `cashier@pos.test` / `password`
+**Demo accounts** (after seeding):
+
+| Role | Email | Password | Sees |
+|---|---|---|---|
+| Admin | `admin@gmail.com` | `1234567890` | Everything — master data, users, any cashier's Z-reading |
+| Cashier | `cashier@gmail.com` | `password` | POS, sales, and their own shift only |
+
+Sign in as both — the difference between them is the point of the access model.
 
 Full build notes and command history: [SETUP.md](SETUP.md)
 
