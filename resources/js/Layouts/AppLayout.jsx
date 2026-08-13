@@ -115,8 +115,8 @@ export default function AppLayout({ title = '', header = null, children }) {
                         borderRadius: 2, mb: 0.5, minHeight: 44,
                         justifyContent: mini ? 'center' : 'flex-start',
                         px: mini ? 1.5 : 2,
-                        '&.Mui-selected': { bgcolor: 'primary.main', color: '#fff',
-                            '& .MuiListItemIcon-root': { color: '#fff' },
+                        '&.Mui-selected': { bgcolor: 'primary.main', color: 'primary.contrastText',
+                            '& .MuiListItemIcon-root': { color: 'primary.contrastText' },
                             '&:hover': { bgcolor: 'primary.dark' } },
                     }}
                 >

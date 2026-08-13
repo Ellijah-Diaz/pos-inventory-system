@@ -15,8 +15,8 @@ export default function Brand({ size = 44, showText = true, light = false }) {
                 sx={{
                     width: size, height: size, borderRadius: size * 0.3,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-                    color: '#fff', boxShadow: '0 6px 16px rgba(37,99,235,0.35)',
+                    background: 'linear-gradient(135deg, #6d28d9 0%, #db2777 100%)',
+                    color: '#fff', boxShadow: '0 6px 16px rgba(109,40,217,0.35)',
                     flexShrink: 0,
                 }}
             >
@@ -28,7 +28,7 @@ export default function Brand({ size = 44, showText = true, light = false }) {
                     fontWeight={800}
                     sx={{ letterSpacing: '-0.5px', color: light ? '#fff' : 'text.primary' }}
                 >
-                    POS<Box component="span" sx={{ color: light ? '#c7d2fe' : 'primary.main' }}>ify</Box>
+                    POS<Box component="span" sx={{ color: light ? '#ddd6fe' : 'primary.main' }}>ify</Box>
                 </Typography>
             )}
         </Box>

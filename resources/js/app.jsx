@@ -25,6 +25,9 @@ createInertiaApp({
         );
     },
     progress: {
-        color: '#4B5563',
+        // Violet-600 rather than either mode's primary: the bar is painted
+        // outside the MUI theme, and this one sits legibly on the zinc-100 and
+        // zinc-900 grounds both.
+        color: '#7c3aed',
     },
 });

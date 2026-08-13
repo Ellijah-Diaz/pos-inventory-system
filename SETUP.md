@@ -178,8 +178,8 @@ Run `php artisan migrate:fresh --seed` to reset the DB with sample data.
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | `admin@pos.test` | `password` |
-| Cashier | `cashier@pos.test` | `password` |
+| Admin | `admin@gmail.com` | `1234567890` |
+| Cashier | `cashier@gmail.com` | `password` |
 
 Seed data also includes 5 categories, 2 suppliers, and 13 sample products
 (two intentionally low-stock for testing alerts).

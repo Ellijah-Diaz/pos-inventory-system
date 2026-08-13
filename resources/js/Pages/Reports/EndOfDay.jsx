@@ -16,7 +16,7 @@ const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractio
 function Stat({ icon, label, value, color = 'primary' }) {
     return (
         <Paper sx={{ p: 2, flex: 1, minWidth: 170, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ bgcolor: `${color}.main`, color: '#fff', p: 1.2, borderRadius: 2, display: 'flex' }}>{icon}</Box>
+            <Box sx={{ bgcolor: `${color}.main`, color: `${color}.contrastText`, p: 1.2, borderRadius: 2, display: 'flex' }}>{icon}</Box>
             <Box>
                 <Typography variant="h6" fontWeight={700}>{value}</Typography>
                 <Typography variant="body2" color="text.secondary">{label}</Typography>

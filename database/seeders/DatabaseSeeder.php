@@ -17,20 +17,26 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // --- Users -----------------------------------------------------
+        // Demo credentials, published in the README and SETUP.md. They exist
+        // so a clone can sign in and look around; they are not secrets and
+        // nothing outside a local demo database should ever use them.
+        //
+        // Keep these in step with both documents. They drifted once already —
+        // the README advertised logins the seeder had never created.
         User::updateOrCreate(
-            ['email' => 'admin@pos.test'],
+            ['email' => 'admin@gmail.com'],
             [
-                'name'      => 'Store Admin',
-                'password'  => Hash::make('password'),
+                'name'      => 'Administrator',
+                'password'  => Hash::make('1234567890'),
                 'role'      => 'admin',
                 'is_active' => true,
             ]
         );
 
         User::updateOrCreate(
-            ['email' => 'cashier@pos.test'],
+            ['email' => 'cashier@gmail.com'],
             [
-                'name'      => 'Store Cashier',
+                'name'      => 'Cashier',
                 'password'  => Hash::make('password'),
                 'role'      => 'cashier',
                 'is_active' => true,

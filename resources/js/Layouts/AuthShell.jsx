@@ -29,7 +29,7 @@ export default function AuthShell({ children }) {
                         display: { xs: 'none', md: 'flex' }, flexDirection: 'column',
                         justifyContent: 'space-between', width: '45%', p: 6, color: '#fff',
                         position: 'relative', overflow: 'hidden',
-                        background: 'linear-gradient(150deg, #1e3a8a 0%, #2563eb 55%, #7c3aed 100%)',
+                        background: 'linear-gradient(150deg, #4c1d95 0%, #6d28d9 55%, #db2777 100%)',
                     }}
                 >
                     <Box sx={{ position: 'absolute', width: 320, height: 320, borderRadius: '50%',
